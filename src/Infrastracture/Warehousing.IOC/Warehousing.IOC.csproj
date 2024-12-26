@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ApplicationCore\Warehousing.ApplicationService\Warehousing.ApplicationService.csproj" />
+    <ProjectReference Include="..\Warehousing.DataAccess.EF\Warehousing.DataAccess.EF.csproj" />
+  </ItemGroup>
+
+</Project>
