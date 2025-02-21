@@ -1,6 +1,8 @@
-﻿using Warehousing.ApplicationService.Features.Countries.Commands.Create;
+﻿using Microsoft.AspNetCore.Http;
+using Warehousing.ApplicationService.Features.Countries.Commands.Create;
 using Warehousing.Common;
 using Warehousing.Domain.Entities;
+using Warehousing.Domain.Freamwork.Extensions;
 using Warehousing.Domain.Repository;
 using Warehousing.Domain.Repository.Base;
 
@@ -11,10 +13,13 @@ namespace Warehousing.ApplicationService.Features.Countries.CommandHandlers
         #region Constructor
         private readonly ICountryRepository _countryRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         public CreateCountryCommandHandler(ICountryRepository countryRepository,
                                            IUnitOfWork unitOfWork)
         {
             _countryRepository = countryRepository;
+            _userId = _httpContextAccessor.GetUserId();
             _unitOfWork = unitOfWork;
         }
         #endregion
@@ -25,7 +30,8 @@ namespace Warehousing.ApplicationService.Features.Countries.CommandHandlers
 
             var country = new Country
             {
-                CountryName = request.CountryName
+                CountryName = request.CountryName,
+                CreatorUserId = _userId
             };
 
             await _countryRepository.AddAsync(country, cancellationToken);

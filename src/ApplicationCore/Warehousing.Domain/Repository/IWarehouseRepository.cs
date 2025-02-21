@@ -11,6 +11,7 @@ namespace Warehousing.Domain.Repository
     {
         Task<bool> IsExistWarehouseName(string warehouseName, CancellationToken cancellationToken);
         Task<List<GetDropDownListResponseDto>> WarehouseListDropDown(CancellationToken cancellationToken);
+        Task<bool> IsExistWarehouse(string warehouseName, string warehouseAddress, CancellationToken cancellationToken);
         Task<List<GetDropDownListResponseDto>> WarehouseUserOrientedListDropDown(string UserIdInWarehouse, CancellationToken cancellationToken);
     }
 }

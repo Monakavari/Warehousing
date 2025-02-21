@@ -37,65 +37,65 @@ namespace Warehousing.ApplicationService.Services.Implementations
             _customerRepository = customerRepository;
         }
         #endregion Constructor
-        public async Task<List<GetDropDownListResponseDto>> FiscalYearListDropDown(CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> FiscalYearListDropDown(CancellationToken cancellationToken)
         {
             var result = await _fiscalyearRepository.FiscalYearListDropDown(cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>> (true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> CountryListDropDown(CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> CountryListDropDown(CancellationToken cancellationToken)
         {
             var result = await _countryRepository.CountryListDropDown(cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> SupplierListDropDown(CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> SupplierListDropDown(CancellationToken cancellationToken)
         {
             var result = await _supplierRepository.SupplierListDropDown(cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> ProductExpireDateListDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> ProductExpireDateListDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken)
         {
             var result = await _inventoryRepository.GetProductExpireDateForDropDown(request, cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> GetWastageProductExpireDateForDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> GetWastageProductExpireDateForDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken)
         {
             var result = await _inventoryRepository.GetWastageProductExpireDateForDropDown(request, cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> ProductLocationListDropDown(int warehouseId, CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> ProductLocationListDropDown(int warehouseId, CancellationToken cancellationToken)
         {
             var result = await _productLocationRepository.ProductLocationListDropDown(warehouseId, cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> ProductListDropDown(CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> ProductListDropDown(CancellationToken cancellationToken)
         {
             var result = await _productRepository.ProductListDropDown(cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> WarehouseListDropDown(CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> WarehouseListDropDown(CancellationToken cancellationToken)
         {
             var result = await _warehouseRepository.WarehouseListDropDown(cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> WarehouseUserOrientedListDropDown(string UserIdInWarehouse, CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> WarehouseUserOrientedListDropDown(string UserIdInWarehouse, CancellationToken cancellationToken)
         {
             var result = await _warehouseRepository.WarehouseUserOrientedListDropDown(UserIdInWarehouse, cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
-        public async Task<List<GetDropDownListResponseDto>> CustomerListDropDown(int warehouse, CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetDropDownListResponseDto>>> CustomerListDropDown(int warehouse, CancellationToken cancellationToken)
         {
             var result = await _customerRepository.CustomerListDropDown(warehouse, cancellationToken);
 
-            return result;
+            return new ApiResponse<List<GetDropDownListResponseDto>>(true, ApiResponseStatusCode.Success, result, "عملیات با موفقیت انجام شد.");
         }
     }
 }

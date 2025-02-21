@@ -21,10 +21,19 @@ namespace Warehousing.WebApi.Controllers
         #endregion Constructor
 
         #region Queries
-        [HttpGet("id")]
+
+        [HttpGet("warehouseId")]
         public async Task<IActionResult> GetProductLocationById(int warehouseId, CancellationToken cancellationToken)
         {
-            var command = new GetProductLocationDetailQuery { WarehouseId = warehouseId };
+            var command = new GetProductLocationListQuery { WarehouseId = warehouseId };
+            var result = await Mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("warehouseId")]
+        public async Task<IActionResult> GetProductLocationList(int warehouseId, CancellationToken cancellationToken)
+        {
+            var command = new GetProductLocationListQuery { WarehouseId = warehouseId };
             var result = await Mediator.Send(command, cancellationToken);
             return Ok(result);
         }

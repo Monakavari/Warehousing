@@ -21,7 +21,14 @@ namespace Warehousing.DataAccess.EF.Repository
         public async Task<bool> IsExistSupplierName(string supplierName, CancellationToken cancellationToken)
         {
             return await _dbContext.Suppliers
-                                       .Where(x => x.SupplierName == supplierName)
+                                       .Where(x => x.SupplierName == supplierName) 
+                                       .AnyAsync(cancellationToken);
+        }
+        public async Task<bool> IsExistSupplier(string supplierName, string SupplerWebsite, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Suppliers
+                                       .Where(x => x.SupplierName == supplierName &&
+                                                   x.SupplerWebsite == SupplerWebsite)
                                        .AnyAsync(cancellationToken);
         }
         public async Task<List<GetDropDownListResponseDto>> SupplierListDropDown(CancellationToken cancellationToken)

@@ -6,16 +6,16 @@ using Warehousing.Domain.Repository;
 
 namespace Warehousing.ApplicationService.Features.ProductLocation.QueryHandlers
 {
-    public class GetProductLocationDetailHandler : MediatR.IRequestHandler<GetProductLocationDetailQuery, ApiResponse<List<GetProductLocationResponseVM>>>
+    public class GetProductLocationListQueryHandler : MediatR.IRequestHandler<GetProductLocationListQuery, ApiResponse<List<GetProductLocationResponseVM>>>
     {
         #region Constructor
         private readonly IProductLocationRepository _productLocationRepository;
-        public GetProductLocationDetailHandler(IProductLocationRepository productLocationRepository)
+        public GetProductLocationListQueryHandler(IProductLocationRepository productLocationRepository)
         {
             _productLocationRepository = productLocationRepository;
         }
         #endregion Constructor
-        public async Task<ApiResponse<List<GetProductLocationResponseVM>>> Handle(GetProductLocationDetailQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<List<GetProductLocationResponseVM>>> Handle(GetProductLocationListQuery request, CancellationToken cancellationToken)
         {
             var data = await _productLocationRepository.FetchIQueryableEntity()
                                             .Select(x => new GetProductLocationResponseVM

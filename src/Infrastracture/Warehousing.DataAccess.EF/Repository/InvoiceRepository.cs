@@ -84,7 +84,8 @@ namespace Warehousing.DataAccess.EF.Repository
                                           s.OperationType == OperationTypeStatus.Returned ? s.MainProductCount :
                                           s.OperationType == OperationTypeStatus.Sold ? -s.MainProductCount :
                                           s.OperationType == OperationTypeStatus.IncreasingBalance ? s.MainProductCount :
-                                          s.OperationType == OperationTypeStatus.DecreasingBalance ? -s.MainProductCount : 0);
+                                          s.OperationType == OperationTypeStatus.DecreasingBalance ? -s.MainProductCount :
+                                          s.OperationType == OperationTypeStatus.TransferFromNewFiscalYear ? s.MainProductCount : 0);
         }
         public async Task<List<GetInvoiceFullInfoResponseDto>> GetSoldAndReturnedInvoiceListForAnyWarehouse(GetInvoiceFullInfoRequestDto request, CancellationToken cancellationToken)
         {

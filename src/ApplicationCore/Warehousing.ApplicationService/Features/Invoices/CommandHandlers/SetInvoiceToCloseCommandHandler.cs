@@ -1,9 +1,12 @@
-﻿using Warehousing.ApplicationService.Features.Invoices.Commands;
-using Warehousing.Common;
+﻿using Warehousing.Common;
 using Warehousing.Domain.Repository.Base;
 using Warehousing.Domain.Repository;
 using Warehousing.Domain.Dtos;
 using Warehousing.Common.DTOs;
+using Microsoft.AspNetCore.Http;
+using Warehousing.Domain.Freamwork.Extensions;
+using Warehousing.ApplicationService.Features.Invoices.Commands.Create;
+using Warehousing.ApplicationService.Services.Contracts;
 
 namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
 {
@@ -11,18 +14,24 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
     {
         #region Constructor
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly ICalculationService _calculationService;
         private readonly IInvoiceItemRepository _invoiceItemRepository;
         private readonly IInventoryRepository _inventoryRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         private readonly IUnitOfWork _unitOfWork;
         public SetInvoiceToCloseCommandHandler(IInvoiceRepository invoiceRepository,
                                                IUnitOfWork unitOfWork,
                                                IInventoryRepository inventoryRepository,
-                                               IInvoiceItemRepository invoiceItemRepository)
+                                               IInvoiceItemRepository invoiceItemRepository,
+                                               ICalculationService calculationService)
         {
             _invoiceRepository = invoiceRepository;
             _inventoryRepository = inventoryRepository;
+            _userId = _httpContextAccessor.GetUserId();
             _unitOfWork = unitOfWork;
             _invoiceItemRepository = invoiceItemRepository;
+            _calculationService = calculationService;
         }
         #endregion Constructor
         public async Task<ApiResponse> Handle(SetInvoiceToCloseCommand request, CancellationToken cancellationToken)
@@ -39,6 +48,7 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
             var getOpenInvoice = _invoiceRepository.GetById(request.InvoiceId);
             getOpenInvoice.InvoiceStatus = Common.Enums.InvoiceStatus.Close;
             getOpenInvoice.ReturnrdInvoiceDateTime = DateTime.Now;
+            getOpenInvoice.ModifierUserId = _userId;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             //2= Inventory Operation

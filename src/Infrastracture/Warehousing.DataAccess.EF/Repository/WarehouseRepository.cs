@@ -25,6 +25,13 @@ namespace Warehousing.DataAccess.EF.Repository
                                        .Where(x => x.WarehouseName == warehouseName)
                                        .AnyAsync(cancellationToken);
         }
+        public async Task<bool> IsExistWarehouse(string warehouseName, string warehouseAddress, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Warehouses
+                                       .Where(x => x.WarehouseName == warehouseName &&
+                                                   x.WarehouseAddress == warehouseAddress)
+                                       .AnyAsync(cancellationToken);
+        }
         public async Task<List<GetDropDownListResponseDto>> WarehouseListDropDown(CancellationToken cancellationToken)
         {
             return await _dbContext.Warehouses

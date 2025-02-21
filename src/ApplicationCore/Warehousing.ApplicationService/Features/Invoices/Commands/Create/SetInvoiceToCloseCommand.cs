@@ -2,9 +2,9 @@
 using Warehousing.Common;
 using Warehousing.Common.DTOs;
 
-namespace Warehousing.ApplicationService.Features.Invoices.Commands
+namespace Warehousing.ApplicationService.Features.Invoices.Commands.Create
 {
-    public class SetInvoiceToCloseCommand :IRequest<ApiResponse>
+    public class SetInvoiceToCloseCommand : IRequest<ApiResponse>
     {
         public int InvoiceId { get; set; }
         public int FiscalYearId { get; set; }

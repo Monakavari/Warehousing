@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Warehousing.Common.Enums;
 using Warehousing.Common.Utilities.Extensions;
+using Microsoft.AspNetCore.Http;
+using Warehousing.Domain.Freamwork.Extensions;
 
 namespace Warehousing.ApplicationService.Features.Inventories.CommandHandlers
 {
@@ -15,10 +17,13 @@ namespace Warehousing.ApplicationService.Features.Inventories.CommandHandlers
         #region Constructor
         private readonly IInventoryRepository _inventoryRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         public CreateReturnWastageProductCommandHandler(IInventoryRepository inventoryRepository,
                                                         IUnitOfWork unitOfWork)
         {
             _inventoryRepository = inventoryRepository;
+            _userId = _httpContextAccessor.GetUserId();
             _unitOfWork = unitOfWork;
         }
         #endregion
@@ -40,7 +45,8 @@ namespace Warehousing.ApplicationService.Features.Inventories.CommandHandlers
                 RefferenceId = request.ReturnedWastageInvRefferenceId,
                 OperationType = OperationTypeStatus.ExitFromWastageWarehouse,
                 OperationDate = PersianDate.ToMiladi(request.ReturnedWastageOperationDate),
-                ProductLocationId = getParentInfo.ProductLocationId
+                ProductLocationId = getParentInfo.ProductLocationId,
+                CreatorUserId = _userId
             };
             await _inventoryRepository.AddAsync(inventory, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Warehousing.ApplicationService.Features.Invoices.Queries;
 using Warehousing.ApplicationService.Services.Contracts;
 using Warehousing.ApplicationService.ViewModels;
@@ -24,9 +25,19 @@ namespace Warehousing.ApplicationService.Services.Implementations
             _productRepository = productRepository;
         }
         #endregion Constructor
-        private int GetSalesPrice(int productId)
+        public int GetSalesPrice(int productId)
         {
             return _productPriceRepository.GetSalesPrice(productId);
+
+        }
+        public int GetCoverPrice(int productId)
+        {
+            return _productPriceRepository.GetCoverPrice(productId);
+
+        }
+        public int GetPurchasePrice(int productId)
+        {
+            return _productPriceRepository.GetPurchasePrice(productId);
 
         }
         public int CalculateInvoicePrice(List<InvoiceProductDto> InvoiceProducts)
@@ -35,5 +46,7 @@ namespace Warehousing.ApplicationService.Services.Implementations
             InvoiceProducts.ForEach(x => totalPrice += GetSalesPrice(x.ProductId) * x.ProductCount);
             return totalPrice;
         }
+     
+        
     }
 }

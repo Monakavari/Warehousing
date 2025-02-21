@@ -11,5 +11,6 @@ namespace Warehousing.Domain.Repository
     {
         Task<bool> IsExistSupplierName(string supplierName, CancellationToken cancellationToken);
         Task<List<GetDropDownListResponseDto>> SupplierListDropDown(CancellationToken cancellationToken);
+        Task<bool> IsExistSupplier(string supplierName, string SupplerWebsite, CancellationToken cancellationToken);
     }
 }

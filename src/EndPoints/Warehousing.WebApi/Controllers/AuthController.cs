@@ -8,12 +8,13 @@ namespace Warehousing.WebApi.Controllers
     [ApiController]
     public class AuthController : Controller
     {
+        #region Constructor
         private readonly IAuthService _authService;
-
         public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
+        #endregion Constructor
 
         [HttpGet]
         public async Task<IActionResult> Login(AuthRequest request, CancellationToken cancellationToken)

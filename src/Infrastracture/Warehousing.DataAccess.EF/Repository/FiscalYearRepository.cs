@@ -4,10 +4,13 @@ using System.Threading;
 using Warehousing.ApplicationService.ViewModels;
 using Warehousing.Common;
 using Warehousing.Common.Enums;
+using Warehousing.Common.Utilities.Extensions;
 using Warehousing.DataAccess.EF.Context;
 using Warehousing.DataAccess.EF.Repositories.Base;
+using Warehousing.Domain.Dtos;
 using Warehousing.Domain.Entities;
 using Warehousing.Domain.Repository;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Warehousing.DataAccess.EF.Repository
 {
@@ -41,7 +44,6 @@ namespace Warehousing.DataAccess.EF.Repository
 
             return true;
         }
-
         public async Task<List<GetDropDownListResponseDto>> FiscalYearListDropDown(CancellationToken cancellationToken)
         {
             return await _dbContext.FiscalYears
@@ -62,6 +64,20 @@ namespace Warehousing.DataAccess.EF.Repository
         {
             return await _dbContext.FiscalYears
                                         .Where(x => x.Id == fiscalYearId)
+                                        .SingleOrDefaultAsync(cancellationToken);
+        }
+        public async Task<CurrentFiscalYearResponseDto> GetCurrentFiscalYearForApi(CancellationToken cancellationToken)
+        {
+            return await _dbContext.FiscalYears
+                                        .Where(x => x.FiscalFlag == true)
+                                        .Select(x => new CurrentFiscalYearResponseDto
+                                        {
+                                            FiscalYearDescription = x.FiscalYearDescription,
+                                            FiscalFlag = x.FiscalFlag,
+                                            StartDate = PersianDate.ToShamsi(x.StartDate),
+                                            EndDate = PersianDate.ToShamsi(x.EndDate)
+
+                                        })
                                         .SingleOrDefaultAsync(cancellationToken);
         }
         public async Task<FiscalYear> GetNewFiscalYear(int fiscalYearId, CancellationToken cancellationToken)

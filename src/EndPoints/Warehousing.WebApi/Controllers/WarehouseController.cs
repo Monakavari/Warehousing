@@ -21,10 +21,9 @@ namespace Warehousing.WebApi.Controllers
         #region Queries
 
         [HttpGet]
-        public async Task<IActionResult> GetProductFlow(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetProductFlow(GetProductFlowListQuery request,CancellationToken cancellationToken)
         {
-            var command = new GetProductFlowListQuery();
-            var result = await Mediator.Send(command, cancellationToken);
+            var result = await Mediator.Send(request, cancellationToken);
             return Ok(result);
         }
         [HttpGet("id")]
@@ -44,18 +43,16 @@ namespace Warehousing.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMainRialiStock(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetMainRialiStock(GetMainRialyStockOfEachWarhouseListQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetMainRialyStockOfEachWarhouseListQuery();
-            var result = await Mediator.Send(command, cancellationToken);
+            var result = await Mediator.Send(request, cancellationToken);
             return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetWastageRialiStock(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetWastageRialiStock(GetWastageRialyStockOfEachWarhouseListQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetWastageRialyStockOfEachWarhouseListQuery();
-            var result = await Mediator.Send(command, cancellationToken);
+            var result = await Mediator.Send(request, cancellationToken);
             return Ok(result);
         }
         #endregion Queries

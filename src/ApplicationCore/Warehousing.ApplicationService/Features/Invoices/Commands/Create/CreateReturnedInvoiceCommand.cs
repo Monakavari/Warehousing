@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Warehousing.Common;
 
-namespace Warehousing.ApplicationService.Features.Invoices.Commands
+namespace Warehousing.ApplicationService.Features.Invoices.Commands.Create
 {
-    public class CreateReturnedInvoiceCommand :IRequest<ApiResponse>
+    public class CreateReturnedInvoiceCommand : IRequest<ApiResponse>
     {
         public int InvoiceId { get; set; }
         public string UserId { get; set; }

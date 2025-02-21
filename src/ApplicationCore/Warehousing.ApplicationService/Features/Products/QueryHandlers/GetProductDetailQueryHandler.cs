@@ -1,4 +1,5 @@
-﻿using Warehousing.ApplicationService.Features.Product.Queries;
+﻿using Microsoft.EntityFrameworkCore;
+using Warehousing.ApplicationService.Features.Product.Queries;
 using Warehousing.ApplicationService.VariableProfiles;
 using Warehousing.ApplicationService.ViewModels;
 using Warehousing.Common;
@@ -17,10 +18,21 @@ namespace Warehousing.ApplicationService.Features.Product.QueryHandlers
         #endregion
         public async Task<ApiResponse<GetProductResponseVM>> Handle(GetProductDetailQuery request, CancellationToken cancellationToken)
         {
-            var entity = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
-            var mapper = ProductProfile.Map(entity);
+            var data = await _productRepository.FetchIQueryableEntity()
+                                                       .Where(x => x.Id == request.Id)
+                                                       .Select(y => new GetProductResponseVM
+                                                       {
+                                                           Id = y.Id,
+                                                           ProductName = y.ProductName,
+                                                           CountInPacking = y.CountInPacking,
+                                                           CountryId = y.CountryId,
+                                                           IsRefregrator = y.IsRefregrator,
+                                                           PackingType = y.PackingType,
+                                                           ProductImage = y.ProductImage
+                                                       })
+                                                       .SingleOrDefaultAsync(cancellationToken);
 
-            return new ApiResponse<GetProductResponseVM>(true, ApiResponseStatusCode.Success, mapper, "عملیات با موفقیت انجام شد");
+            return new ApiResponse<GetProductResponseVM>(true, ApiResponseStatusCode.Success, data, "عملیات با موفقیت انجام شد");
         }
     }
 }

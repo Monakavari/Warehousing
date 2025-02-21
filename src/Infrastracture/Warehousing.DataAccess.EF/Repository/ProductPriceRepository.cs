@@ -111,5 +111,31 @@ namespace Warehousing.DataAccess.EF.Repository
 
             return productSales;
         }
+        public int GetPurchasePrice(int productId)
+        {
+            int purchasePrice = _dbContext.ProductPrices
+                                             .Where(p => p.ActionDate <= DateTime.Now &&
+                                                         p.ProductId == productId)
+                                             .OrderByDescending(o => o.ActionDate)
+                                             .Take(1)
+                                             .Select(s => s.PurchasePrice)
+                                             .DefaultIfEmpty()
+                                             .Single();
+
+            return purchasePrice;
+        }
+        public int GetCoverPrice(int productId)
+        {
+            int coverPrice = _dbContext.ProductPrices
+                                             .Where(p => p.ActionDate <= DateTime.Now &&
+                                                         p.ProductId == productId)
+                                             .OrderByDescending(o => o.ActionDate)
+                                             .Take(1)
+                                             .Select(s => s.CoverPrice)
+                                             .DefaultIfEmpty()
+                                             .Single();
+
+            return coverPrice;
+        }
     }
 }

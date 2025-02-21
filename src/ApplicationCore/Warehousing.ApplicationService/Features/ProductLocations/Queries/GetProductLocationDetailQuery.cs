@@ -1,11 +1,11 @@
 ﻿using MediatR;
-using Warehousing.ApplicationService.ViewModels;
 using Warehousing.Common;
+using Warehousing.Domain.Dtos;
 
-namespace Warehousing.ApplicationService.Features.ProductLocation.Queries
+namespace Warehousing.ApplicationService.Features.ProductLocations.Queries
 {
-    public class GetProductLocationDetailQuery:IRequest<ApiResponse<List<GetProductLocationResponseVM>>>
+    public class GetProductLocationDetailQuery :IRequest<ApiResponse<ProductLocationResponseDto>>
     {
-        public int WarehouseId { get; set; }
+        public int Id { get; set; }
     }
 }

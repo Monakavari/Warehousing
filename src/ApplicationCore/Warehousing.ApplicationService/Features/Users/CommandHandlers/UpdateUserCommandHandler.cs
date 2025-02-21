@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Warehousing.ApplicationService.Features.Users.Commands.Update;
 using Warehousing.ApplicationService.VariableProfiles;
 using Warehousing.Common;
+using Warehousing.Common.Utilities.Extensions;
 using Warehousing.Domain.Entities;
+using Warehousing.Domain.Freamwork.Extensions;
 using Warehousing.Domain.Repository;
 using Warehousing.Domain.Repository.Base;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Warehousing.ApplicationService.Features.Suppliers.CommandHandlers
 {
@@ -15,6 +19,8 @@ namespace Warehousing.ApplicationService.Features.Suppliers.CommandHandlers
         private readonly UserManager<ApplicationUsers> _userManager;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserWarehouseRepository _userWarehouseRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         public UpdateUserCommandHandler(IUserRepository userRepository,
                                         IUnitOfWork unitOfWork,
                                         UserManager<ApplicationUsers> userManager,
@@ -23,6 +29,7 @@ namespace Warehousing.ApplicationService.Features.Suppliers.CommandHandlers
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _userId = _httpContextAccessor.GetUserId();
             _userWarehouseRepository = userWarehouseRepository;
         }
         #endregion
@@ -33,9 +40,22 @@ namespace Warehousing.ApplicationService.Features.Suppliers.CommandHandlers
             if (data is null)
                 throw new AppException("تامین کننده یافت نشد.");
 
-            if (await _userRepository.IsExistUserName(request.UserName, request.NationalCode, cancellationToken))
-                throw new AppException("عنوان نمی تواند تکراری باشد");
+            data.Id = request.UserIdInWarehouse;
+            data.FirstName = request.FirstName;
+            data.LastName = request.LastName;
+            data.UserImage = request.UserImage;
+            data.NationalCode = request.NationalCode;
+            data.PersonalCode = request.PersonalCode;
+            data.BirthDate = PersianDate.ToMiladi(request.BirthDate);
+            data.Gender = request.Gender;
+            data.UserName = request.UserName;
+            //data.ModifierUserId = _userId;
 
+            if (data.UserName != request.UserName) 
+            {
+                if (await _userRepository.IsExistUserName(request.UserName, request.NationalCode, cancellationToken))
+                    throw new AppException("نام کاربری نمی تواند تکراری باشد");
+            }
             var userIdsInWarehouse = await _userWarehouseRepository.GetUserIdInWarehouseList(request.UserIdInWarehouse, cancellationToken);
             _userWarehouseRepository.DeleteRange(userIdsInWarehouse);
 
@@ -44,8 +64,8 @@ namespace Warehousing.ApplicationService.Features.Suppliers.CommandHandlers
                 var userWarehouse = new UserWarehouse()
                 {
                     WarehouseId = warehouseId,
-                    UserIdInWarehouse = request.UserIdInWarehouse
-                    //CreatorUserId = 
+                    UserIdInWarehouse = request.UserIdInWarehouse,
+                    CreatorUserId = _userId
                 };
                 await _userWarehouseRepository.AddAsync(userWarehouse, cancellationToken);
             }

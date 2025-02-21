@@ -14,5 +14,7 @@ namespace Warehousing.Domain.Repository
         Task<List<GetProductPriceResponseDto>> GetProductPriceHistoryList(int productId, CancellationToken cancellationToken);
         Task<bool> HasNotActionDateArrived(CancellationToken cancellationToken);
         int GetSalesPrice(int productId);
+        int GetPurchasePrice(int productId);
+        int GetCoverPrice(int productId);
     }
 }

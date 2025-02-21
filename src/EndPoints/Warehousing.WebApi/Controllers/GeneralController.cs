@@ -37,16 +37,23 @@ namespace Warehousing.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductExpireDateForDropDown(GetProductExpireDateRequestForDropDown request,CancellationToken cancellationToken)
+        public async Task<IActionResult> GetProductExpireDateForDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken)
         {
-            var result = await _generalService.ProductExpireDateListDropDown(request,cancellationToken);
+            var result = await _generalService.ProductExpireDateListDropDown(request, cancellationToken);
             return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProductLocationListDropDown(int warehouseId,CancellationToken cancellationToken)
+        public async Task<IActionResult> GetWastageProductExpireDateForDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken)
         {
-            var result = await _generalService.ProductLocationListDropDown(warehouseId,cancellationToken);
+            var result = await _generalService.GetWastageProductExpireDateForDropDown(request, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductLocationListDropDown(int warehouseId, CancellationToken cancellationToken)
+        {
+            var result = await _generalService.ProductLocationListDropDown(warehouseId, cancellationToken);
             return Ok(result);
         }
 
@@ -56,5 +63,29 @@ namespace Warehousing.WebApi.Controllers
             var result = await _generalService.WarehouseUserOrientedListDropDown(UserIdInWarehouse, cancellationToken);
             return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ProductListDropDown(CancellationToken cancellationToken)
+        {
+            var result = await _generalService.ProductListDropDown(cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> WarehouseListDropDown(CancellationToken cancellationToken)
+        {
+            var result = await _generalService.WarehouseListDropDown(cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CustomerListDropDown(int warehouse, CancellationToken cancellationToken)
+        {
+            var result = await _generalService.CustomerListDropDown(warehouse, cancellationToken);
+            return Ok(result);
+        }
     }
 }
+
+
+

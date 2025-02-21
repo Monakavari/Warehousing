@@ -4,6 +4,7 @@ using System.Threading;
 using Warehousing.ApplicationService.ViewModels;
 using Warehousing.DataAccess.EF.Context;
 using Warehousing.DataAccess.EF.Repositories.Base;
+using Warehousing.Domain.Dtos;
 using Warehousing.Domain.Entities;
 using Warehousing.Domain.Repository;
 
@@ -23,7 +24,7 @@ namespace Warehousing.DataAccess.EF.Repository
         {
             return await _dbContext.ProductLocations
                                           .Where(x => x.ProductLocationAddress == productLocationAddress ||
-                                                 x.WarehouseId == warehouseId)
+                                                      x.WarehouseId == warehouseId)
                                           .AnyAsync(cancellationToken);
         }
         public async Task<List<GetDropDownListResponseDto>> ProductLocationListDropDown(int warehouseId, CancellationToken cancellationToken)
@@ -39,11 +40,23 @@ namespace Warehousing.DataAccess.EF.Repository
         }
         public async Task<int> GetProductLocationId(int warehouseId, CancellationToken cancellationToken)
         {
-           return await _dbContext.ProductLocations
-                                        .Where(p => p.ProductLocationAddress.Contains("عمومی") &&
-                                                    p.WarehouseId == warehouseId)
-                                        .Select(s => s.Id)
-                                        .SingleOrDefaultAsync(cancellationToken);
+            return await _dbContext.ProductLocations
+                                         .Where(p => p.ProductLocationAddress.Contains("عمومی") &&
+                                                     p.WarehouseId == warehouseId)
+                                         .Select(s => s.Id)
+                                         .SingleOrDefaultAsync(cancellationToken);
+        }
+        public async Task<ProductLocationResponseDto> GetProductLocationById(int id, CancellationToken cancellationToken)
+        {
+            return await _dbContext.ProductLocations
+                                           .Where(p => p.Id == id)
+                                           .Select(y => new ProductLocationResponseDto
+                                           {
+                                               WareHouseId = y.WarehouseId,
+                                               ProductLocationAddress = y.ProductLocationAddress,
+                                               ProductLocationId = y.Id
+                                           })
+                                           .SingleOrDefaultAsync(cancellationToken);
         }
     }
 }

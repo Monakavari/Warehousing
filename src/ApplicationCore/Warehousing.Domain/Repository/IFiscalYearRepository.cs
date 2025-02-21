@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Warehousing.ApplicationService.ViewModels;
 using Warehousing.Common.Enums;
+using Warehousing.Domain.Dtos;
 using Warehousing.Domain.Entities;
 using Warehousing.Domain.Repository.Base;
 
@@ -18,5 +19,6 @@ namespace Warehousing.Domain.Repository
         Task<FiscalYear> GetCurrentFiscalYear(int fiscalYearId, CancellationToken cancellationToken);
         Task<FiscalYear> GetNewFiscalYear(int fiscalYearId, CancellationToken cancellationToken);
         Task<DateTime> GetLastEndDate(CancellationToken cancellationToken);
+        Task<CurrentFiscalYearResponseDto> GetCurrentFiscalYearForApi(CancellationToken cancellationToken);
     }
 }

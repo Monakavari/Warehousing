@@ -1,4 +1,5 @@
-﻿using Warehousing.ApplicationService.Features.Invoices.Commands;
+﻿using Microsoft.AspNetCore.Http;
+using Warehousing.ApplicationService.Features.Invoices.Commands.Create;
 using Warehousing.ApplicationService.Services.Contracts;
 using Warehousing.Common;
 using Warehousing.Common.DTOs;
@@ -6,6 +7,7 @@ using Warehousing.Common.Enums;
 using Warehousing.Common.Utilities.Extensions;
 using Warehousing.Domain.Dtos;
 using Warehousing.Domain.Entities;
+using Warehousing.Domain.Freamwork.Extensions;
 using Warehousing.Domain.Repository;
 using Warehousing.Domain.Repository.Base;
 
@@ -18,6 +20,8 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IProductRepository _productRepository;
         private readonly IInventoryRepository _inventoryRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         private readonly IUnitOfWork _unitOfWork;
         public CreateInvoiceCommandHandler(ICalculationService calculationService,
                                            IInvoiceRepository invoiceRepository,
@@ -27,6 +31,7 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
         {
             _calculationService = calculationService;
             _invoiceRepository = invoiceRepository;
+            _userId = _httpContextAccessor.GetUserId();
             _unitOfWork = unitOfWork;
             _inventoryRepository = inventoryRepository;
             _productRepository = productRepository;
@@ -56,7 +61,7 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
 
             var invoice = new Invoice()
             {
-                CreatorUserId = "0",
+                CreatorUserId = _userId,
                 CustomerId = request.CustomerId,
                 InvoiceType = InvoiceType.Sold,
                 InvoiceStatus = request.InvoiceStatus,
@@ -82,7 +87,7 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
                 }, cancellationToken);
             }
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-           await _unitOfWork.TransactionCommit(cancellationToken);
+            await _unitOfWork.TransactionCommit(cancellationToken);
 
             return new ApiResponse(true, ApiResponseStatusCode.Success, "عملیات با موفقیت انجام شد.");
         }
@@ -92,16 +97,16 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
 
             foreach (var item in request.InvoiceProducts)
             {
-                
+
                 result.Add(new InvoiceItem
                 {
                     ProductCount = item.ProductCount,
                     ProductId = item.ProductId,
                     InvoiceId = item.InvoiceId,
                     CreatorUserId = item.CreatorUserId,
-                    CoverPrice = 0,
-                    SalePrice = 0,
-                    PurchasePrice = 0,
+                    CoverPrice = _calculationService.GetCoverPrice(item.ProductId),
+                    SalePrice = _calculationService.GetSalesPrice(item.ProductId),
+                    PurchasePrice = _calculationService.GetPurchasePrice(item.ProductId),
                 });
             }
             return result;

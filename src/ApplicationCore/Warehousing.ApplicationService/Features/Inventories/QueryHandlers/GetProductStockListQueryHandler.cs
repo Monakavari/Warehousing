@@ -18,7 +18,7 @@ namespace Warehousing.ApplicationService.Features.Inventory.QueryHandlers
         #endregion
         public async Task<ApiResponse<List<GetProductStockResponseDto>>> Handle(GetProductStockListQuery request, CancellationToken cancellationToken)
         {
-            var data = await _inventoryRepository.GetProductStockOfMainWarehouse(request.WarehouseId, request.FiscalYearId, cancellationToken);
+            var data = await _inventoryRepository.GetProductStock(request.WarehouseId, request.FiscalYearId, cancellationToken);
 
             return new ApiResponse<List<GetProductStockResponseDto>>(true, ApiResponseStatusCode.Success, data, "عملیات با موفقیت انجام شد.");
         }

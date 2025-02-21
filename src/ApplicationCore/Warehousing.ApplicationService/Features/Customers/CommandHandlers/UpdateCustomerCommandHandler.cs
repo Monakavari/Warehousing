@@ -8,6 +8,8 @@ using Warehousing.Common.Utilities.Extensions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Warehousing.DataAccess.EF.Repository;
 using Warehousing.ApplicationService.Features.Customers.Commands.Update;
+using Microsoft.AspNetCore.Http;
+using Warehousing.Domain.Freamwork.Extensions;
 
 namespace Warehousing.ApplicationService.Features.Inventory.CommandHandlers
 {
@@ -16,10 +18,13 @@ namespace Warehousing.ApplicationService.Features.Inventory.CommandHandlers
         #region Constructor
         private readonly ICustomerRepository _customerRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         public UpdateCustomerCommandHandler(ICustomerRepository customerRepository,
                                             IUnitOfWork unitOfWork)
         {
             _customerRepository = customerRepository;
+            _userId = _httpContextAccessor.GetUserId();
             _unitOfWork = unitOfWork;
         }
         #endregion
@@ -34,8 +39,9 @@ namespace Warehousing.ApplicationService.Features.Inventory.CommandHandlers
             data.CustomerAddress = request.CustomerAddress;
             data.CustomerTel = request.CustomerTel;
             data.EconomicCode = request.EconomicCode;
-            data.ModifierUserId = "0";
+            data.ModifierUserId = _userId;
             data.WarehouseId = request.WarehouseId;
+            data.UpdateDate = DateTime.Now;
 
             if (data.CustomerName != request.CustomerName || 
                 data.EconomicCode != request.EconomicCode)

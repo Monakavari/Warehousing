@@ -8,14 +8,6 @@ namespace Warehousing.ApplicationService.VariableProfiles
 {
     public class ProductLocationProfile
     {
-        public static ProductLocation Map(CreateProductLocationCommand command)
-        {
-            return new ProductLocation
-            {
-                WarehouseId = command.WarehouseId,
-                ProductLocationAddress = command.ProductLocationAddress,
-            };
-        }
         public static ProductLocation Map(UpdateProductLocationCommand command)
         {
             return new ProductLocation

@@ -37,7 +37,7 @@ namespace Warehousing.ApplicationService.Services.Implementations
                                            .SingleOrDefaultAsync(cancellationToken);
 
             if (user == null)
-                throw new AppException("کاربری یافت نشد.");
+                throw new AppException("کاربری یافت نشد..");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 

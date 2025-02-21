@@ -1,11 +1,13 @@
-﻿using Warehousing.ApplicationService.Features.Invoices.Commands;
-using Warehousing.ApplicationService.Services.Contracts;
+﻿using Warehousing.ApplicationService.Services.Contracts;
 using Warehousing.Common;
 using Warehousing.Domain.Repository.Base;
 using Warehousing.Domain.Repository;
 using Warehousing.DataAccess.EF.Repository;
 using Warehousing.Common.Enums;
 using Warehousing.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Warehousing.Domain.Freamwork.Extensions;
+using Warehousing.ApplicationService.Features.Invoices.Commands.Create;
 
 namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
 {
@@ -13,16 +15,19 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
     {
         #region Constructor
         private readonly IInvoiceRepository _invoiceRepository;
-           private readonly IInventoryRepository _inventoryRepository;
+        private readonly IInventoryRepository _inventoryRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         private readonly IUnitOfWork _unitOfWork;
         public CreatereturnedInvoiceCommandHandler(IInvoiceRepository invoiceRepository,
                                                    IUnitOfWork unitOfWork,
                                                    IInventoryRepository inventoryRepository)
-           {
-                       _invoiceRepository = invoiceRepository;
+        {
+            _invoiceRepository = invoiceRepository;
             _inventoryRepository = inventoryRepository;
+            _userId = _httpContextAccessor.GetUserId();
             _unitOfWork = unitOfWork;
-                }
+        }
         #endregion Constructor
         public async Task<ApiResponse> Handle(CreateReturnedInvoiceCommand request, CancellationToken cancellationToken)
         {
@@ -47,7 +52,7 @@ namespace Warehousing.ApplicationService.Features.Invoices.CommandHandlers
                     Description = "مرجوعی",
                     FiscalYearId = request.FiscalYearId,
                     InvoiceId = request.InvoiceId,
-                    CreatorUserId = request.UserId,
+                    CreatorUserId = _userId,
                     ExpireDate = item.ExpireDate,
                     RefferenceId = item.RefferenceId,
                     WarehouseId = item.WarehouseId,

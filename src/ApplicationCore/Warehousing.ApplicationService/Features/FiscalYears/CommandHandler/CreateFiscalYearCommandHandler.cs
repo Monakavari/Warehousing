@@ -4,6 +4,10 @@ using Warehousing.Domain.Repository.Base;
 using Warehousing.Domain.Repository;
 using Warehousing.ApplicationService.VariableProfiles;
 using Warehousing.Common.Utilities.Extensions;
+using Microsoft.AspNetCore.Http;
+using Warehousing.Domain.Freamwork.Extensions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Warehousing.Domain.Entities;
 
 namespace Warehousing.ApplicationService.Features.FiscalYear.CommandHandler
 {
@@ -12,10 +16,13 @@ namespace Warehousing.ApplicationService.Features.FiscalYear.CommandHandler
         #region Constructor
         private readonly IFiscalYearRepository _fiscalYearRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         public CreateFiscalYearCommandHandler(IFiscalYearRepository fiscalYearRepository,
                                               IUnitOfWork unitOfWork)
         {
             _fiscalYearRepository = fiscalYearRepository;
+            _userId = _httpContextAccessor.GetUserId();
             _unitOfWork = unitOfWork;
         }
         #endregion
@@ -28,6 +35,14 @@ namespace Warehousing.ApplicationService.Features.FiscalYear.CommandHandler
                                                                     PersianDate.ToMiladi(request.EndDate)))
                 throw new AppException("تاریخ شروع یا پایان صحیح نمیباشد.");
 
+            var fiscal = new Warehousing.Domain.Entities.FiscalYear
+            {
+                StartDate = PersianDate.ToMiladi(request.StartDate),
+                EndDate = PersianDate.ToMiladi(request.EndDate),
+                FiscalYearDescription = request.FiscalYearDescription,
+                FiscalFlag = request.FiscalFlag,
+                CreatorUserId = _userId,
+            };
             var mapper = FiscalYearProfile.Map(request);
             await _fiscalYearRepository.AddAsync(mapper, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

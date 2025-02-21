@@ -4,6 +4,8 @@ using Warehousing.ApplicationService.Features.FiscalYear.Commands.Create;
 using Warehousing.ApplicationService.Features.FiscalYear.Commands.Delete;
 using Warehousing.ApplicationService.Features.FiscalYear.Commands.Update;
 using Warehousing.ApplicationService.Features.FiscalYear.Queries;
+using Warehousing.ApplicationService.Features.FiscalYears.Queries;
+using Warehousing.Domain.Entities;
 using Warehousing.WebApi.Infrastructure;
 
 namespace Warehousing.WebApi.Controllers
@@ -29,6 +31,22 @@ namespace Warehousing.WebApi.Controllers
         public async Task<IActionResult> GetAllFiscalYears(CancellationToken cancellationToken)
         {
             var command = new GetFiscalYearListQuery();
+            var result = await Mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("fiscalYearId")]
+        public async Task<IActionResult> GetNewFiscalYear(int fiscalYearId, CancellationToken cancellationToken)
+        {
+            var command = new GetNewFiscalYearQuery { FiscalYearId = fiscalYearId };
+            var result = await Mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentFiscalYear(CancellationToken cancellationToken)
+        {
+            var command = new GetCurrentFiscalYearQuery ();
             var result = await Mediator.Send(command, cancellationToken);
             return Ok(result);
         }

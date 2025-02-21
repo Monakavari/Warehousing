@@ -17,6 +17,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Infrastracture\Warehousing.DataAccess.EF\Warehousing.DataAccess.EF.csproj" />
 		<ProjectReference Include="..\Warehousing.Common\Warehousing.Common.csproj" />
+		<ProjectReference Include="..\Warehousing.Domain.Freamwork\Warehousing.Domain.Freamwork.csproj" />
 		<ProjectReference Include="..\Warehousing.Domain\Warehousing.Domain.csproj" />
 	</ItemGroup>
 

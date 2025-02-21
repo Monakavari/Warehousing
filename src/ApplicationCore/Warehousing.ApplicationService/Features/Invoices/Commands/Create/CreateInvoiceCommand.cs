@@ -4,7 +4,7 @@ using Warehousing.Common;
 using Warehousing.Common.DTOs;
 using Warehousing.Common.Enums;
 
-namespace Warehousing.ApplicationService.Features.Invoices.Commands
+namespace Warehousing.ApplicationService.Features.Invoices.Commands.Create
 {
     public class CreateInvoiceCommand : IRequest<ApiResponse>
     {
@@ -14,7 +14,7 @@ namespace Warehousing.ApplicationService.Features.Invoices.Commands
         public List<InvoiceProductDto> InvoiceProducts { get; set; }
         //public InvoiceType InvoiceType { get; set; }
         public InvoiceStatus InvoiceStatus { get; set; }
-       // public int InvoiceTotalPrice { get; set; }
+        // public int InvoiceTotalPrice { get; set; }
 
     }
 }

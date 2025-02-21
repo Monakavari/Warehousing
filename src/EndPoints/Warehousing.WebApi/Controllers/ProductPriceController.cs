@@ -28,15 +28,15 @@ namespace Warehousing.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetProductPriceList(CancellationToken cancellationToken)
+        [HttpGet("fiscalYearId")]
+        public async Task<IActionResult> GetProductPriceList(int fiscalYearId,CancellationToken cancellationToken)
         {
-            var command = new GetProductPriceListQuery();
+            var command = new GetProductPriceListQuery { FiscalYearId = fiscalYearId };
             var result = await Mediator.Send(command, cancellationToken);
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("ProductId")]
         public async Task<IActionResult> GetProductPriceHistory(int ProductId,CancellationToken cancellationToken)
         {
             var command = new GetProductPriceHistoryQuery { ProductId = ProductId }; ;

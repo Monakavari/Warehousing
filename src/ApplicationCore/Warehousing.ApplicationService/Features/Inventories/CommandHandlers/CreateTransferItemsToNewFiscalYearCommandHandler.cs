@@ -5,6 +5,8 @@ using Warehousing.Domain.Repository;
 using Warehousing.Domain.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Warehousing.Common.Enums;
+using Microsoft.AspNetCore.Http;
+using Warehousing.Domain.Freamwork.Extensions;
 
 namespace Warehousing.ApplicationService.Features.Inventories.CommandHandlers
 {
@@ -14,6 +16,8 @@ namespace Warehousing.ApplicationService.Features.Inventories.CommandHandlers
         private readonly IInventoryRepository _inventoryRepository;
         private readonly IFiscalYearRepository _fiscalYearRepository;
         private readonly IProductLocationRepository _productLocationRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private static string _userId = "0";
         private readonly IUnitOfWork _unitOfWork;
         public CreateTransferItemsToNewFiscalYearCommandHandler(IInventoryRepository inventoryRepository,
                                                                 IUnitOfWork unitOfWork,
@@ -24,24 +28,25 @@ namespace Warehousing.ApplicationService.Features.Inventories.CommandHandlers
             _unitOfWork = unitOfWork;
             _fiscalYearRepository = fiscalYearRepository;
             _productLocationRepository = productLocationRepository;
+            _userId = _httpContextAccessor.GetUserId();
         }
         #endregion
 
         public async Task<ApiResponse> Handle(TransferItemsToNewFiscalYearRequestCommand request, CancellationToken cancellationToken)
         {
-            var data = _inventoryRepository.TransferToNewFiscalYear(new CloseFiscalYearDto 
+            var data = await _inventoryRepository.TransferToNewFiscalYear(new CloseFiscalYearDto
             {
                 FiscalYearId = request.FiscalYearId,
                 UserId = request.UserId,
                 WarehouseId = request.WarehouseId,
-            
+
             }, cancellationToken);
 
             var lastEndDate = await _fiscalYearRepository.GetLastEndDate(cancellationToken);
             var currentFiscal = await _fiscalYearRepository.GetCurrentFiscalYear(request.FiscalYearId, cancellationToken);
             currentFiscal.FiscalFlag = false;
-            
-            var newFiscal = await _fiscalYearRepository.GetCurrentFiscalYear(request.FiscalYearId, cancellationToken);
+
+            var newFiscal = await _fiscalYearRepository.GetNewFiscalYear(request.FiscalYearId, cancellationToken);
             newFiscal.FiscalFlag = true;
 
             foreach (var item in data)
@@ -56,16 +61,16 @@ namespace Warehousing.ApplicationService.Features.Inventories.CommandHandlers
                     MainProductCount = item.TotalProductCount,
                     ExpireDate = item.ExpireDate,
                     RefferenceId = 0,
-                    CreatorUserId = request.UserId,
+                    CreatorUserId = _userId,
                     WarehouseId = request.WarehouseId,
                     WastageProductCount = 0,
                     ProductLocationId = await _productLocationRepository.GetProductLocationId(request.WarehouseId, cancellationToken),
-                    FiscalYearId = newFiscal.Id
+                    FiscalYearId = newFiscal.Id,
                 };
 
                 await _inventoryRepository.AddAsync(inventory, cancellationToken);
             }
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new ApiResponse(true, ApiResponseStatusCode.Success, "عملیات با موفقیت انجام شد.");
         }

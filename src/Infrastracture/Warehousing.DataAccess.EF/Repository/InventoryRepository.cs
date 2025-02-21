@@ -31,7 +31,7 @@ namespace Warehousing.DataAccess.EF.Repository
                                            .SingleOrDefaultAsync(cancellationToken);
             return result;
         }
-        public async Task<List<GetProductStockResponseDto>> GetProductStockOfMainWarehouse(int warehouseId, int fiscalYearId, CancellationToken cancellationToken)
+        public async Task<List<GetProductStockResponseDto>> GetProductStock(int warehouseId, int fiscalYearId, CancellationToken cancellationToken)
 
         {
             return await _dbContext.Products

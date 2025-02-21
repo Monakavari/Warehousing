@@ -11,8 +11,5 @@ namespace Warehousing.Domain.Repository
     {
         Task<List<GetMainRialiStockResponseDto>> GetMainRialiStock(int fiscalYearId, int warehouseId, CancellationToken cancellationToken);
         Task<List<GetWastageRialiStockResponseDto>> GetWastageRialiStock(int fiscalYearId, int warehouseId, CancellationToken cancellationToken);
-        int GetTotalPurchasePrice(IQueryable<ProductPrice> productPriceList, IQueryable<Inventory> stockList, int productId);
-        int GetTotalCoverPrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId);
-        int GetTotalSalePrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId);
     }
 }

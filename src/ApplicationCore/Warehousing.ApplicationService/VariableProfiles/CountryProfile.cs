@@ -17,16 +17,7 @@ namespace Warehousing.ApplicationService.VariableProfiles
                 Name = country.CountryName
             };
         }
-        public static Country Map(UpdateCountryCommand command)
-        {
-            return new Country
-            {
-                CountryName = command.CountryName,
-                //data.ModifierUserId = request.CountryName;
-                Id = command.Id,
-                UpdateDate = DateTime.Now
-            };
-        }
+      
     }
 }
 

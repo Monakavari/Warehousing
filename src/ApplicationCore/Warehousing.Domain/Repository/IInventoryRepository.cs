@@ -11,7 +11,7 @@ namespace Warehousing.Domain.Repository
     public interface IInventoryRepository : IBaseRepository<Inventory>
     {
         Task<Inventory> GetParentInfo(int referenceId, CancellationToken cancellationToken);
-        Task<List<GetProductStockResponseDto>> GetProductStockOfMainWarehouse(int warehouseId, int fiscalYearId, CancellationToken cancellationToken);
+        Task<List<GetProductStockResponseDto>> GetProductStock(int warehouseId, int fiscalYearId, CancellationToken cancellationToken);
         Task<List<GetDropDownListResponseDto>> GetProductExpireDateForDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken);
         Task<List<GetDropDownListResponseDto>> GetWastageProductExpireDateForDropDown(GetProductExpireDateRequestForDropDown request, CancellationToken cancellationToken);
         Task<int> GetPhysicalStockForEachBranch(int inventoryId, CancellationToken cancellationToken);

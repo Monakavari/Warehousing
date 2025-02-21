@@ -51,15 +51,14 @@ namespace Warehousing.DataAccess.EF.Repository
                                         WastageProductId = p.Id,
                                         WastageProductName = p.ProductName,
                                         WastageProductCode = p.ProductCode,
-                                        TotalWastagePurchasePrice = GetTotalPurchasePrice(wastageProductPriceList, wastageStockList, p.Id),
-                                        TotalWastageCoverPrice = GetTotalCoverPrice(wastageProductPriceList, wastageStockList, p.Id),
-                                        TotalWastageSalePrice = GetTotalSalePrice(wastageProductPriceList, wastageStockList, p.Id),
-                                        TotalWastageProductCount = GetTotalProductCount(wastageStockList, p.Id)
+                                        TotalWastagePurchasePrice = GetWastageTotalPurchasePrice(wastageProductPriceList, wastageStockList, p.Id),
+                                        TotalWastageCoverPrice = GetWastageTotalCoverPrice(wastageProductPriceList, wastageStockList, p.Id),
+                                        TotalWastageSalePrice = GetWastageTotalSalePrice(wastageProductPriceList, wastageStockList, p.Id),
+                                        TotalWastageProductCount = GetWastageTotalProductCount(wastageStockList, p.Id)
 
                                     })
                                      .ToListAsync(cancellationToken);
         }
-
         private IQueryable<ProductPrice> GetProductPriceList()
         {
             return _context.ProductPrices
@@ -83,7 +82,7 @@ namespace Warehousing.DataAccess.EF.Repository
                                     i.OperationType == OperationTypeStatus.ExitFromWastageWarehouse)
                         .AsQueryable();
         }
-        public int GetTotalPurchasePrice(IQueryable<ProductPrice> productPriceList, IQueryable<Inventory> stockList, int productId)
+        private int GetTotalPurchasePrice(IQueryable<ProductPrice> productPriceList, IQueryable<Inventory> stockList, int productId)
         {
             return (productPriceList.Where(purchase => purchase.ProductId == productId)
                                     .Take(1)
@@ -96,13 +95,24 @@ namespace Warehousing.DataAccess.EF.Repository
                                        s.OperationType == OperationTypeStatus.EnterToWastageWarehouse ? -s.WastageProductCount :
                                        s.OperationType == OperationTypeStatus.ExitFromWastageWarehouse ? -s.WastageProductCount :
                                        s.OperationType == OperationTypeStatus.Returned ? s.MainProductCount :
-                                       s.OperationType == OperationTypeStatus.Sold ? -s.MainProductCount : 
+                                       s.OperationType == OperationTypeStatus.Sold ? -s.MainProductCount :
                                        s.OperationType == OperationTypeStatus.IncreasingBalance ? s.MainProductCount :
-                                       s.OperationType == OperationTypeStatus.DecreasingBalance ? -s.MainProductCount:
+                                       s.OperationType == OperationTypeStatus.DecreasingBalance ? -s.MainProductCount :
                                        s.OperationType == OperationTypeStatus.TransferFromNewFiscalYear ? s.MainProductCount : 0));
 
         }
-        public int GetTotalCoverPrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId)
+        private int GetWastageTotalPurchasePrice(IQueryable<ProductPrice> productPriceList, IQueryable<Inventory> stockList, int productId)
+        {
+            return (productPriceList.Where(purchase => purchase.ProductId == productId)
+                                    .Take(1)
+                                    .Select(s => s.PurchasePrice)
+                                    .DefaultIfEmpty()
+                                    .Single())
+                 * (stockList.Where(s => s.ProductId == productId)
+                             .Sum(s => s.OperationType == OperationTypeStatus.EnterToWastageWarehouse ? -s.WastageProductCount :
+                                       s.OperationType == OperationTypeStatus.ExitFromWastageWarehouse ? -s.WastageProductCount : 0));
+        }
+        private int GetTotalCoverPrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId)
         {
             return
                 (pricePriceList.Where(purchase => purchase.ProductId == productId)
@@ -123,7 +133,20 @@ namespace Warehousing.DataAccess.EF.Repository
                                        s.OperationType == OperationTypeStatus.TransferFromNewFiscalYear ? s.MainProductCount : 0));
 
         }
-        public int GetTotalSalePrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId)
+        private int GetWastageTotalCoverPrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId)
+        {
+
+            return (pricePriceList.Where(purchase => purchase.ProductId == productId)
+                        .Take(1)
+                        .Select(s => s.CoverPrice)
+                        .DefaultIfEmpty()
+                        .Single())
+                        *
+                 (stockList.Where(s => s.ProductId == productId)
+                           .Sum(s => s.OperationType == OperationTypeStatus.EnterToWastageWarehouse ? -s.WastageProductCount :
+                                     s.OperationType == OperationTypeStatus.ExitFromWastageWarehouse ? -s.WastageProductCount : 0));
+        }
+        private int GetTotalSalePrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId)
         {
             return (pricePriceList.Where(purchase => purchase.ProductId == productId)
                                   .Take(1)
@@ -142,6 +165,17 @@ namespace Warehousing.DataAccess.EF.Repository
                                        s.OperationType == OperationTypeStatus.TransferFromNewFiscalYear ? s.MainProductCount : 0));
 
         }
+        private int GetWastageTotalSalePrice(IQueryable<ProductPrice> pricePriceList, IQueryable<Inventory> stockList, int productId)
+        {
+            return (pricePriceList.Where(purchase => purchase.ProductId == productId)
+                                  .Take(1)
+                                  .Select(s => s.SalesPrice)
+                                  .DefaultIfEmpty()
+                                  .Single())
+                 * (stockList.Where(s => s.ProductId == productId)
+                            .Sum(s => s.OperationType == OperationTypeStatus.ExitFromMainWarehouse ? -s.MainProductCount :
+                                      s.OperationType == OperationTypeStatus.EnterToWastageWarehouse ? -s.WastageProductCount : 0));
+        }
         private int GetTotalProductCount(IQueryable<Inventory> stockList, int productId)
         {
             return stockList.Where(s => s.ProductId == productId)
@@ -155,6 +189,12 @@ namespace Warehousing.DataAccess.EF.Repository
                                        s.OperationType == OperationTypeStatus.DecreasingBalance ? -s.MainProductCount :
                                        s.OperationType == OperationTypeStatus.TransferFromNewFiscalYear ? s.MainProductCount : 0);
 
+        }
+        private int GetWastageTotalProductCount(IQueryable<Inventory> stockList, int productId)
+        {
+            return stockList.Where(s => s.ProductId == productId)
+                            .Sum(s => s.OperationType == OperationTypeStatus.EnterToWastageWarehouse ? -s.WastageProductCount :
+                                       s.OperationType == OperationTypeStatus.ExitFromWastageWarehouse ? -s.WastageProductCount : 0);
         }
     }
 }

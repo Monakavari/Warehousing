@@ -22,6 +22,6 @@ namespace Warehousing.Domain.Entities.Base
         public bool IsDelete { get; set; }
         public string Log { get; set; }
 
-        public virtual ApplicationUsers User { get; set; }
+       // public virtual ApplicationUsers User { get; set; }
     }
 }
